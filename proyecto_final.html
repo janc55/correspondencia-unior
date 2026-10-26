@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Masterclass de Cierre · Sistema de Correspondencia UNIOR</title>
+<title>Presentación Proyecto Final · Sistema de Correspondencia UNIOR</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* ═══════════════════════════════════════════════════════════════
@@ -14,14 +18,16 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  --papel: #0a0e14;
-  --superficie: #111821;
-  --superficie-2: #17202c;
-  --superficie-3: #1e2937;
-  --linea: #263345;
-  --tinta: #eef2f7;
-  --suave: #a3b0c2;
-  --tenue: #66768b;
+  /* Paleta Dark (Preestablecida para vista digital de alto impacto) */
+  --papel-fondo: #0b0f15;
+  --papel-hoja: #111822;
+  --superficie: #16202c;
+  --superficie-2: #1d2a3a;
+  --superficie-3: #243447;
+  --linea: #2a3d54;
+  --tinta: #f0f4f9;
+  --suave: #9bb0c7;
+  --tenue: #627790;
 
   --verde: #3fb950;
   --azul: #58a6ff;
@@ -31,237 +37,489 @@
   --amarillo: #e3b341;
 
   --acento: var(--azul);
-  --acento-suave: rgba(88, 166, 255, .14);
+  --acento-suave: rgba(88, 166, 255, .15);
 
-  --sans: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", Consolas, Menlo, monospace;
 
-  --radio: .9em;
+  --sombra-hoja: 0 16px 40px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+  --radio: 12px;
   color-scheme: dark;
 }
 
 :root[data-theme="light"] {
-  --papel: #f6f8fb;
-  --superficie: #ffffff;
-  --superficie-2: #eef2f7;
-  --superficie-3: #e3e9f1;
-  --linea: #d3dce7;
-  --tinta: #0f1722;
-  --suave: #4a5a6e;
-  --tenue: #7b8a9c;
-  --verde: #1a7f37;
-  --azul: #0969da;
-  --naranja: #bc4c00;
-  --violeta: #8250df;
-  --rojo: #cf222e;
-  --amarillo: #9a6700;
+  --papel-fondo: #eef2f7;
+  --papel-hoja: #ffffff;
+  --superficie: #f8fafc;
+  --superficie-2: #edf2f7;
+  --superficie-3: #e2e8f0;
+  --linea: #cbd5e1;
+  --tinta: #0f172a;
+  --suave: #475569;
+  --tenue: #64748b;
+
+  --verde: #16a34a;
+  --azul: #0284c7;
+  --naranja: #ea580c;
+  --violeta: #7c3aed;
+  --rojo: #dc2626;
+  --amarillo: #d97706;
+
+  --acento: var(--azul);
+  --acento-suave: rgba(2, 132, 199, .12);
+  --sombra-hoja: 0 12px 32px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
   color-scheme: light;
 }
 
-[data-capa="caso"]     { --acento: var(--azul);    --acento-suave: rgba(88, 166, 255, .14); }
-[data-capa="arq"]      { --acento: var(--verde);   --acento-suave: rgba(63, 185, 80, .14); }
-[data-capa="decisio"]  { --acento: var(--violeta); --acento-suave: rgba(188, 140, 255, .14); }
-[data-capa="evolucion"]{ --acento: var(--naranja); --acento-suave: rgba(240, 136, 62, .14); }
+[data-capa="caso"]      { --acento: var(--azul);    --acento-suave: rgba(88, 166, 255, .14); }
+[data-capa="arq"]       { --acento: var(--verde);   --acento-suave: rgba(63, 185, 80, .14); }
+[data-capa="decisio"]   { --acento: var(--violeta); --acento-suave: rgba(188, 140, 255, .14); }
+[data-capa="evolucion"] { --acento: var(--naranja); --acento-suave: rgba(240, 136, 62, .14); }
 
 * { box-sizing: border-box; }
 
-html, body {
-  margin: 0; height: 100%; overflow: hidden;
-  background: var(--papel); color: var(--tinta);
+html {
+  scroll-behavior: smooth;
+  background-color: var(--papel-fondo);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--papel-fondo);
+  color: var(--tinta);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* ───────────────────────── Lienzo 16:9 ───────────────────────── */
+/* ═══════════ BARRA SUPERIOR DE ACCIONES (VISOR TIPO PDF) ═══════════ */
+.visor-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background: color-mix(in srgb, var(--papel-hoja) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--linea);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
 
-.deck { position: fixed; inset: 0; display: grid; place-items: center; }
+.visor-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
-.slide {
-  --w: min(100vw, 177.78vh);
+.badge-pdf {
+  background: #e11d48;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.visor-titulo {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--tinta);
+}
+
+.visor-sub {
+  font-size: 0.78rem;
+  color: var(--suave);
   display: none;
-  position: relative;
-  width: var(--w);
-  height: calc(var(--w) * .5625);
-  font-size: calc(var(--w) / 96);
-  padding: 3.4em 4.6em 4.2em;
+}
+@media (min-width: 768px) {
+  .visor-sub { display: inline; }
+}
+
+.visor-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--linea);
+  background: var(--superficie);
+  color: var(--tinta);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-accion:hover {
+  background: var(--superficie-2);
+  border-color: var(--acento);
+  transform: translateY(-1px);
+}
+
+.btn-accion.primario {
+  background: var(--acento);
+  color: #ffffff;
+  border-color: var(--acento);
+}
+.btn-accion.primario:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 4px 14px rgba(88, 166, 255, 0.35);
+}
+
+/* ═══════════ CONTENEDOR DE HOJAS PDF ═══════════ */
+.documento-pdf {
+  display: flex;
   flex-direction: column;
-  gap: 1.5em;
-  overflow: hidden;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 2rem 1rem 5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Cada Hoja simula una lámina de PDF tamaño apaisado (Landscape 16:9 / A4) */
+.hoja-pdf {
+  position: relative;
+  width: 100%;
+  max-width: 1140px;
+  min-height: 641px;
+  aspect-ratio: 16 / 9;
   background:
-    radial-gradient(60em 34em at 100% 0%, var(--acento-suave), transparent 70%),
-    var(--papel);
-  line-height: 1.35;
+    radial-gradient(55em 32em at 96% 4%, var(--acento-suave), transparent 70%),
+    var(--papel-hoja);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-hoja);
+  padding: 3rem 3.8rem 3.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
 }
-.slide.activa { display: flex; }
 
-/* Pie de la diapositiva */
-.slide::after {
-  content: "DFSQA-04 · TRABAJO FINAL: SISTEMA DE CORRESPONDENCIA UNIOR · JOSÉ ALFREDO NEGRETTI CORTÉS";
-  position: absolute; left: 4.6em; right: 4.6em; bottom: 1.5em;
-  font: 500 .7em/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
-  color: var(--tenue);
-  padding-top: 1em; border-top: 1px solid var(--linea);
+.hoja-pdf:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
 }
-.slide.portada::after, .slide.separador::after { content: none; }
 
-/* Navegación y Encabezado */
-.ruta {
-  display: flex; justify-content: space-between; align-items: center;
-  font: 600 .78em/1 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+/* Encabezado de Hoja */
+.hoja-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 600 0.8rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--acento);
-  padding-bottom: .9em; position: relative;
+  padding-bottom: 0.85rem;
   border-bottom: 1px solid var(--linea);
 }
-.ruta__n { color: var(--tinta); font-weight: 700; font-family: var(--mono); font-size: 1.35em; }
 
-/* Tipografía */
+.hoja-cabecera__n {
+  color: var(--tinta);
+  font-weight: 700;
+  font-family: var(--mono);
+  font-size: 1.15em;
+  background: var(--superficie-2);
+  padding: 0.2em 0.6em;
+  border-radius: 6px;
+  border: 1px solid var(--linea);
+}
+
+/* Pie de Hoja */
+.hoja-pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 500 0.72rem/1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tenue);
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--linea);
+  margin-top: auto;
+}
+
+/* Tipografía y Jerarquía */
 h1, h2, h3, p, ol, ul, figure, pre { margin: 0; }
-h1 { font-size: 4.5em; line-height: 1.05; letter-spacing: -.035em; font-weight: 800; }
-h2 { font-size: 2.6em; line-height: 1.1; letter-spacing: -.025em; font-weight: 750; }
-h3 { font-size: 1.4em; line-height: 1.2; font-weight: 700; }
+h1 { font-size: 2.85rem; line-height: 1.1; letter-spacing: -0.035em; font-weight: 800; }
+h2 { font-size: 2.15rem; line-height: 1.15; letter-spacing: -0.025em; font-weight: 750; }
+h3 { font-size: 1.25rem; line-height: 1.25; font-weight: 700; }
 h1 b, h2 b { color: var(--acento); font-weight: inherit; }
 
-p { font-size: 1.25em; color: var(--suave); }
+p { font-size: 1.05rem; line-height: 1.5; color: var(--suave); }
 p b, li b { color: var(--tinta); font-weight: 650; }
-.grande { font-size: 1.5em; color: var(--tinta); line-height: 1.3; }
+.grande { font-size: 1.3rem; color: var(--tinta); line-height: 1.4; }
 
-code, .mono { font-family: var(--mono); font-size: .92em; }
-p code, li code { background: var(--superficie-3); padding: .08em .35em; border-radius: .3em; color: var(--tinta); }
+code, .mono { font-family: var(--mono); font-size: 0.92em; }
+p code, li code { background: var(--superficie-3); padding: 0.12em 0.4em; border-radius: 0.3em; color: var(--tinta); }
 
 .rotulo {
   display: inline-block;
-  font: 650 .8em/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+  font: 650 0.76rem/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--acento);
 }
 .rotulo.ok { color: var(--verde); }
 .rotulo.mal { color: var(--rojo); }
 
-.cuerpo { flex: 1; min-height: 0; display: grid; gap: 1.6em; align-content: stretch; }
-.col-2 { grid-template-columns: 1fr 1fr; }
-.col-3 { grid-template-columns: repeat(3, 1fr); }
-.col-21 { grid-template-columns: 1.55fr 1fr; }
+/* Distribución de Contenido */
+.cuerpo {
+  flex: 1;
+  display: grid;
+  gap: 1.35rem;
+  align-content: stretch;
+}
+.col-2  { grid-template-columns: 1fr 1fr; }
+.col-3  { grid-template-columns: repeat(3, 1fr); }
+.col-21 { grid-template-columns: 1.45fr 1fr; }
 
 /* Tarjetas */
 .tarjeta {
   background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: var(--radio);
-  padding: 1.6em 1.8em;
-  display: flex; flex-direction: column; gap: .8em;
-  min-height: 0;
+  padding: 1.35rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 .tarjeta.acentuada {
-  border-color: color-mix(in srgb, var(--acento) 55%, var(--linea));
-  background: linear-gradient(180deg, var(--acento-suave), transparent 75%), var(--superficie);
+  border-color: color-mix(in srgb, var(--acento) 45%, var(--linea));
+  background: linear-gradient(180deg, var(--acento-suave), transparent 85%), var(--superficie);
 }
-.tarjeta .num { font: 700 2.4em/1 var(--mono); color: var(--acento); }
-.tarjeta ul, .tarjeta ol { padding-left: 1.2em; display: grid; gap: .5em; }
-.tarjeta li { font-size: 1.2em; color: var(--suave); }
+.tarjeta .num { font: 700 2.1rem/1 var(--mono); color: var(--acento); }
+.tarjeta ul, .tarjeta ol { padding-left: 1.2rem; display: grid; gap: 0.45rem; }
+.tarjeta li { font-size: 0.98rem; line-height: 1.45; color: var(--suave); }
 .tarjeta li::marker { color: var(--acento); }
 
 .franja {
-  display: flex; align-items: center; gap: 1.2em;
-  padding: 1em 1.4em;
-  border-left: .3em solid var(--acento);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-left: 0.35rem solid var(--acento);
   background: var(--superficie);
   border-radius: 0 var(--radio) var(--radio) 0;
 }
-.franja p { font-size: 1.35em; color: var(--tinta); }
+.franja p { font-size: 1.05rem; color: var(--tinta); margin: 0; }
 .franja b { color: var(--acento); }
 
 /* Código y consola */
 pre.codigo, pre.consola {
-  font: 500 1.1em/1.5 var(--mono);
+  font: 500 0.88rem/1.55 var(--mono);
   background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: var(--radio);
-  padding: 1.2em 1.4em;
-  white-space: pre; overflow: hidden;
+  padding: 1.15rem 1.35rem;
+  white-space: pre;
+  overflow-x: auto;
   color: var(--tinta);
 }
-pre.consola { background: #06090d; }
-pre b { color: var(--rojo); }
+pre.consola { background: #070a0e; border-color: #1a2533; }
+pre b { color: var(--rojo); font-weight: 600; }
 pre em { color: var(--azul); font-style: normal; }
 pre i { color: var(--tenue); font-style: italic; }
 pre .ok { color: var(--verde); font-weight: 600; }
 
-/* Tablas */
-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 1.2em; }
-th, td { text-align: left; padding: .75em 1em; border-bottom: 1px solid var(--linea); }
-th { font: 650 .78em/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--suave); }
-td { color: var(--suave); }
-td:first-child { color: var(--tinta); font-weight: 600; }
-.tabla-envoltura { background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; padding: .4em 1em; }
-
-/* Portada y Separador */
-.slide.portada {
-  padding: 4.6em 5.4em; display: flex; justify-content: center;
-  background: radial-gradient(70em 40em at 92% 8%, var(--acento-suave), transparent 70%), var(--papel);
+/* Portada Estilo Documento Ejecutivo */
+.hoja-pdf.portada {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 3.5rem;
+  align-items: center;
+  padding: 3.5rem 4.5rem;
+  background:
+    radial-gradient(65em 38em at 90% 10%, var(--acento-suave), transparent 70%),
+    var(--papel-hoja);
 }
-.slide.portada.activa { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; align-items: center; }
-.portada__texto { display: flex; flex-direction: column; gap: 1.4em; }
-.portada .eyebrow { font: 650 .85em/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--acento); }
-.portada .sub { font-size: 1.6em; color: var(--suave); }
-.regla { width: 5em; height: .3em; border: 0; margin: 0; background: var(--acento); border-radius: .2em; }
-.meta { display: flex; flex-direction: column; gap: .8em; margin-top: 1em; }
-.meta span { font: 600 .78em/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--tenue); }
-.meta b { font: 650 1.4em/1.2 var(--sans); text-transform: none; color: var(--tinta); display: block; }
+.portada__texto { display: flex; flex-direction: column; gap: 1.25rem; }
+.portada .eyebrow { font: 700 0.78rem/1.4 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--acento); }
+.portada .sub { font-size: 1.22rem; line-height: 1.4; color: var(--suave); }
+.regla { width: 5.5rem; height: 0.3rem; border: 0; margin: 0; background: var(--acento); border-radius: 0.2rem; }
+.meta { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.8rem; }
+.meta span { font: 600 0.72rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tenue); }
+.meta b { font: 650 1.12rem/1.3 var(--sans); text-transform: none; color: var(--tinta); display: block; }
 
-.slide.separador { padding: 5em 5.4em; }
-.slide.separador.activa { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; align-items: center; }
-.separador__n { font: 800 10em/.85 var(--mono); letter-spacing: -.06em; color: var(--acento); }
-.separador .temas { list-style: none; padding: 0; display: grid; gap: .9em; counter-reset: t; }
-.separador .temas li {
-  counter-increment: t; display: grid; grid-template-columns: 2.6em 1fr; align-items: center;
-  font-size: 1.35em; color: var(--tinta); padding: .9em 1.1em; background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio);
-}
-.separador .temas li::before { content: counter(t, decimal-leading-zero); font: 700 .9em var(--mono); color: var(--acento); }
+/* ═══════════ REGLAS DE IMPRESIÓN Y EXPORTACIÓN A PDF ═══════════ */
+@media print {
+  @page {
+    size: landscape;
+    margin: 6mm;
+  }
 
-/* Controles */
-.progreso { position: fixed; left: 0; bottom: 0; height: 3px; background: var(--acento); z-index: 20; transition: width .25s; width: 0; }
-.barra {
-  position: fixed; left: 50%; bottom: .8em; transform: translateX(-50%);
-  display: flex; align-items: center; gap: .6em; z-index: 30; padding: .4em .8em; border-radius: 99em;
-  background: color-mix(in srgb, var(--superficie-2) 92%, transparent); border: 1px solid var(--linea);
-  font: 500 13px/1 var(--sans); color: var(--suave); opacity: .3; transition: opacity .2s;
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .visor-topbar, .visor-floating-btn {
+    display: none !important;
+  }
+
+  .documento-pdf {
+    display: block !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hoja-pdf {
+    page-break-after: always;
+    break-after: page;
+    break-inside: avoid;
+    margin: 0 0 0 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 98vh !important;
+    height: 98vh !important;
+    box-shadow: none !important;
+    border: 1px solid #d3dce7 !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 2.2rem 3rem !important;
+  }
+
+  .hoja-pdf:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .tarjeta, pre.codigo, pre.consola, .franja {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    border-color: #cbd5e1 !important;
+    background: #f8fafc !important;
+    color: #0f172a !important;
+  }
+
+  pre.consola {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+  }
+
+  p { color: #334155 !important; }
+  .hoja-pie { color: #64748b !important; border-top-color: #cbd5e1 !important; }
 }
-.barra:hover { opacity: 1; }
-.barra button { font: inherit; color: var(--tinta); background: var(--superficie-3); border: 1px solid var(--linea); border-radius: 99em; padding: .4em .8em; cursor: pointer; }
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 900px) {
+  .hoja-pdf {
+    aspect-ratio: auto;
+    min-height: auto;
+    padding: 2rem 1.5rem;
+  }
+  .hoja-pdf.portada {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .col-2, .col-3, .col-21 {
+    grid-template-columns: 1fr;
+  }
+  h1 { font-size: 2.1rem; }
+  h2 { font-size: 1.65rem; }
+}
 </style>
 </head>
 
 <body>
 
-<div class="deck">
+<!-- Barra superior fija tipo visor de PDF -->
+<header class="visor-topbar">
+  <div class="visor-info">
+    <span class="badge-pdf">PDF PREVIEW</span>
+    <span class="visor-titulo">Defensa Proyecto Final · UNIOR</span>
+    <span class="visor-sub">| José Alfredo Negretti Cortés (7 Hojas)</span>
+  </div>
+  <div class="visor-acciones">
+    <a href="https://correspondencia.nettidev.com" target="_blank" rel="noopener noreferrer" class="btn-accion" title="Ver Sistema en Producción" style="border-color:color-mix(in srgb, var(--verde) 40%, var(--linea)); color:var(--verde);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      <span>Web en Vivo</span>
+    </a>
+    <a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" class="btn-accion" title="Ver Repositorio en GitHub">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+      <span>GitHub</span>
+    </a>
+    <button type="button" class="btn-accion" id="btnTheme" title="Alternar Modo Oscuro / Claro">
+      <span id="themeIcon">☯</span> <span id="themeLabel">Modo Claro</span>
+    </button>
+    <button type="button" class="btn-accion primario" id="btnPrint" title="Exportar todas las hojas a PDF">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+      Exportar a PDF
+    </button>
+  </div>
+</header>
 
-  <!-- ═══════════ 1 · PORTADA ═══════════ -->
-  <section class="slide portada activa" data-capa="caso">
+<!-- Flujo continuo de Hojas tipo PDF -->
+<main class="documento-pdf">
+
+  <!-- ═══════════ HOJA 1 · PORTADA ═══════════ -->
+  <article class="hoja-pdf portada" data-capa="caso" id="hoja-1">
     <div class="portada__texto">
-      <span class="eyebrow">Universidad Privada de Oruro · Trabajos de Cierre</span>
+      <span class="eyebrow">Universidad Privada de Oruro · Proyecto de Grado / Diplomado</span>
       <h1>Sistema de Correspondencia <b>UNIOR</b></h1>
       <hr class="regla">
       <p class="sub">Digitalización, Hoja de Ruta Digital y Seguimiento de Correspondencia Institucional en Tiempo Real</p>
+      
       <div class="meta">
         <div><span>Postgraduante:</span><b>José Alfredo Negretti Cortés</b></div>
         <div><span>Programa:</span><b>Diplomado en Full Stack Development & Advanced QA Automation</b></div>
-        <div><span>Docente:</span><b>David Morales Vega</b></div>
+        <div><span>Docente Tutor:</span><b>David Morales Vega</b></div>
+        <div><span>Web Oficial Publicada:</span><b style="font-family:var(--mono); font-size:0.95rem;"><a href="https://correspondencia.nettidev.com" target="_blank" rel="noopener noreferrer" style="color:var(--verde); text-decoration:underline; text-underline-offset:3px;">https://correspondencia.nettidev.com</a></b></div>
+        <div><span>Repositorio GitHub:</span><b style="font-family:var(--mono); font-size:0.95rem;"><a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:var(--acento); text-decoration:underline; text-underline-offset:3px;">https://github.com/janc55/correspondencia-unior</a></b></div>
       </div>
     </div>
-    <pre class="consola"><span class="tenue">// Trazabilidad de Hoja de Ruta Digital</span>
+
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      <pre class="consola"><span class="tenue">// Trazabilidad de Hoja de Ruta Digital</span>
 <span class="tenue">Correlativo: UNIOR-2026-0842</span>
 ----------------------------------------
-1. Recepción (Ventanilla)   <span class="ok">10:15 [REGISTRADO]</span>
+1. Recepción (Ventanilla)    <span class="ok">10:15 [REGISTRADO]</span>
 2. Vicerrectorado Académico  <span class="ok">11:30 [EN REVISIÓN]</span>
-3. Decanato de Medicina      <span class="ok">14:20 [DERIVADO]</span>
+3. Decanato de Medicina       <span class="ok">14:20 [DERIVADO]</span>
 ----------------------------------------
 <span class="ok">✓ Trazabilidad en tiempo real &lt; 5s</span>
 <span class="ok">✓ 0% Correspondencia extraviada</span></pre>
-  </section>
+      
+      <div class="tarjeta" style="padding:1rem 1.2rem; gap:0.45rem;">
+        <span class="rotulo ok">Hoja 01 de 07 · Presentación Ejecutiva</span>
+        <p style="font-size:0.88rem; margin:0;">Documento oficial de defensa técnica y arquitectónica para el Sistema de Gestión Documental y Correspondencia UNIOR.</p>
+        <p style="font-size:0.82rem; margin:0; font-family:var(--mono); color:var(--tenue);">Web Oficial: <a href="https://correspondencia.nettidev.com" target="_blank" rel="noopener noreferrer" style="color:var(--verde); font-weight:600; text-decoration:none;">correspondencia.nettidev.com</a></p>
+        <p style="font-size:0.8rem; margin:0; font-family:var(--mono); color:var(--tenue);">Repo GitHub: <a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:var(--acento); text-decoration:none;">github.com/janc55/correspondencia-unior</a></p>
+      </div>
+    </div>
+  </article>
 
-  <!-- ═══════════ 2 · EL CASO DE ESTUDIO ═══════════ -->
-  <section class="slide" data-capa="caso">
-    <div class="ruta"><span>01 · Caso de Estudio</span><b class="ruta__n">01 / 06</b></div>
+  <!-- ═══════════ HOJA 2 · EL CASO DE ESTUDIO ═══════════ -->
+  <article class="hoja-pdf" data-capa="caso" id="hoja-2">
+    <div class="hoja-cabecera">
+      <span>01 · Caso de Estudio & Sustitución Digital</span>
+      <span class="hoja-cabecera__n">Hoja 02 / 07</span>
+    </div>
+
     <h2>El Caso de Estudio: <b>Sustitución Digital</b></h2>
+
     <div class="cuerpo col-2">
       <div class="tarjeta acentuada">
         <span class="rotulo ok">Propósito del Sistema</span>
@@ -269,26 +527,41 @@ td:first-child { color: var(--tinta); font-weight: 600; }
         <ul>
           <li><b>Marca de Estado</b>: Urgente, Archivar, Preparar Respuesta.</li>
           <li><b>Trazabilidad Temporal</b>: Firma de recepción y salida con registro fecha-hora.</li>
-          <li><b>Consulta Pública</b>: Seguimiento externo sin requerir autenticación.</li>
+          <li><b>Consulta Pública</b>: Seguimiento externo sin requerir autenticación previa.</li>
         </ul>
       </div>
+
       <div class="tarjeta">
         <span class="rotulo">Estimación y Volumetría</span>
         <ul>
           <li><b>Volumen Mensual</b>: ~300 - 400 cartas/mes (~15 por día hábil).</li>
           <li><b>Horas Pico</b>: 11:00-15:00 y 17:00-19:00 (concentran el 60% del tráfico).</li>
-          <li><b>Concurrencia</b>: ~20 - 25 usuarios internos activos.</li>
+          <li><b>Concurrencia</b>: ~20 - 25 usuarios internos activos concurrentemente.</li>
           <li><b>Crecimiento Anual</b>: ~5.000 reg/año (1-3 GB/año con escaneos anexos).</li>
         </ul>
       </div>
     </div>
-    <div class="franja"><p>Objetivo Central: Pasar de un proceso manual en papel a un <b>seguimiento auditable e ininterrumpido</b>.</p></div>
-  </section>
 
-  <!-- ═══════════ 3 · KPIS Y ROLES ═══════════ -->
-  <section class="slide" data-capa="caso">
-    <div class="ruta"><span>01 · Caso de Estudio</span><b class="ruta__n">02 / 06</b></div>
+    <div class="franja">
+      <p>Objetivo Central: Pasar de un proceso manual en papel a un <b>seguimiento auditable e ininterrumpido</b>.</p>
+    </div>
+
+    <div class="hoja-pie">
+      <span>DFSQA-04 · SISTEMA DE CORRESPONDENCIA UNIOR</span>
+      <span style="font-family:var(--mono); text-transform:none;"><a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">github.com/janc55/correspondencia-unior</a></span>
+      <span>JOSÉ ALFREDO NEGRETTI CORTÉS</span>
+    </div>
+  </article>
+
+  <!-- ═══════════ HOJA 3 · KPIS Y ROLES ═══════════ -->
+  <article class="hoja-pdf" data-capa="caso" id="hoja-3">
+    <div class="hoja-cabecera">
+      <span>01 · Caso de Estudio · Actores y Métricas</span>
+      <span class="hoja-cabecera__n">Hoja 03 / 07</span>
+    </div>
+
     <h2>Usuarios e Indicadores Clave <b>(KPIs)</b></h2>
+
     <div class="cuerpo col-2">
       <div class="tarjeta">
         <span class="rotulo">Roles del Sistema</span>
@@ -299,27 +572,48 @@ td:first-child { color: var(--tinta); font-weight: 600; }
           <li><b>Público Externo</b>: Consulta el estado mediante número correlativo + dato de verificación.</li>
         </ul>
       </div>
+
       <div class="tarjeta acentuada">
         <span class="rotulo ok">Indicadores Clave (KPIs)</span>
-        <div style="display:grid; gap:0.6em; margin-top:0.3em;">
-          <div><b class="num">&lt; 24 hrs</b><p style="font-size:1em">Tiempo medio de derivación esperado por tramo con alerta de estancamiento.</p></div>
-          <div><b class="num">0% Perdidos</b><p style="font-size:1em">Meta estricta de trámites sin trazabilidad o desatendidos.</p></div>
-          <div><b class="num">&lt; 5 sec</b><p style="font-size:1em">Búsqueda y respuesta del estado mediante número correlativo.</p></div>
+        <div style="display:grid; gap:0.9rem; margin-top:0.2rem;">
+          <div>
+            <b class="num">&lt; 24 hrs</b>
+            <p style="font-size:0.95rem; margin-top:0.2rem;">Tiempo medio de derivación esperado por tramo con alerta de estancamiento.</p>
+          </div>
+          <div>
+            <b class="num">0% Perdidos</b>
+            <p style="font-size:0.95rem; margin-top:0.2rem;">Meta estricta de trámites sin trazabilidad o desatendidos.</p>
+          </div>
+          <div>
+            <b class="num">&lt; 5 sec</b>
+            <p style="font-size:0.95rem; margin-top:0.2rem;">Búsqueda y respuesta del estado mediante número correlativo.</p>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ═══════════ 4 · DIAGRAMA DE ARQUITECTURA ═══════════ -->
-  <section class="slide" data-capa="arq">
-    <div class="ruta"><span>02 · Arquitectura</span><b class="ruta__n">03 / 06</b></div>
+    <div class="hoja-pie">
+      <span>DFSQA-04 · SISTEMA DE CORRESPONDENCIA UNIOR</span>
+      <span style="font-family:var(--mono); text-transform:none;"><a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">github.com/janc55/correspondencia-unior</a></span>
+      <span>JOSÉ ALFREDO NEGRETTI CORTÉS</span>
+    </div>
+  </article>
+
+  <!-- ═══════════ HOJA 4 · DIAGRAMA DE ARQUITECTURA ═══════════ -->
+  <article class="hoja-pdf" data-capa="arq" id="hoja-4">
+    <div class="hoja-cabecera">
+      <span>02 · Arquitectura de Software</span>
+      <span class="hoja-cabecera__n">Hoja 04 / 07</span>
+    </div>
+
     <h2>Arquitectura del Sistema: <b>Monolito Modular</b></h2>
+
     <div class="cuerpo col-21">
-      <pre class="codigo" style="font-size:0.95em"><b>[ Navegador Web / Móvil ]</b>
+      <pre class="codigo"><b>[ Navegador Web / Móvil ]</b>
         │
         │  HTTPS (REST / JSON /api/v1)
         ▼
-<b>[ Frontend SPA: React + Vite ]</b>
+<b>[ Frontend SPA: React + Vite ]</b> <em>(correspondencia.nettidev.com)</em>
         │
         │  REST API Versionada
         ▼
@@ -332,6 +626,7 @@ td:first-child { color: var(--tinta); font-weight: 600; }
         │
         ├──► <b>[ PostgreSQL + Prisma ORM ]</b> (Persistencia Tipada)
         └──► <b>[ Almacenamiento Local / MinIO ]</b> (Archivos Escaneados)</pre>
+
       <div class="tarjeta">
         <span class="rotulo ok">Estructura del Backend</span>
         <ul>
@@ -342,123 +637,147 @@ td:first-child { color: var(--tinta); font-weight: 600; }
         </ul>
       </div>
     </div>
-    <div class="franja"><p>Arquitectura simplificada sin bus de mensajes en fase inicial: <b>alta cohesión y bajo acoplamiento</b>.</p></div>
-  </section>
 
-  <!-- ═══════════ 5 · DECISIONES ARQUITECTÓNICAS ═══════════ -->
-  <section class="slide" data-capa="decisio">
-    <div class="ruta"><span>03 · Decisiones Justificadas</span><b class="ruta__n">04 / 06</b></div>
+    <div class="franja">
+      <p>Arquitectura simplificada sin bus de mensajes en fase inicial: <b>alta cohesión y bajo acoplamiento</b>.</p>
+    </div>
+
+    <div class="hoja-pie">
+      <span>DFSQA-04 · SISTEMA DE CORRESPONDENCIA UNIOR</span>
+      <span style="font-family:var(--mono); text-transform:none;"><a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">github.com/janc55/correspondencia-unior</a></span>
+      <span>JOSÉ ALFREDO NEGRETTI CORTÉS</span>
+    </div>
+  </article>
+
+  <!-- ═══════════ HOJA 5 · DECISIONES ARQUITECTÓNICAS ═══════════ -->
+  <article class="hoja-pdf" data-capa="decisio" id="hoja-5">
+    <div class="hoja-cabecera">
+      <span>03 · Decisiones Justificadas</span>
+      <span class="hoja-cabecera__n">Hoja 05 / 07</span>
+    </div>
+
     <h2>Decisiones Arquitectónicas <b>Justificadas</b></h2>
+
     <div class="cuerpo col-2">
       <div class="tarjeta">
         <h3>1. Monolito Modular NestJS</h3>
-        <p><b>Por qué:</b> Carga baja (15 trámites/día, 25 usuarios). Un solo despliegue reduce sobrecostos de infraestructura y red.</p>
-        <p><b>Descartado:</b> Microservicios iniciales (sobreingeniería operativa).</p>
-        <p><b>Reversión:</b> NestJS permite desacoplar módulos (ej. Notificaciones) a microservicios si escala el tráfico.</p>
+        <p><b>Por qué:</b> Carga moderada (~15 trámites/día, 25 usuarios). Un solo despliegue reduce sobrecostos de infraestructura, latencia interna y complejidad DevOps.</p>
+        <p><b>Descartado:</b> Microservicios iniciales (sobreingeniería innecesaria).</p>
+        <p><b>Reversión:</b> La modularidad de NestJS permite aislar módulos (ej. Notificaciones) y migrarlos a microservicios sin reescribir la lógica.</p>
       </div>
+
       <div class="tarjeta">
         <h3>2. PostgreSQL + Prisma ORM</h3>
-        <p><b>Por qué:</b> Relaciones fuertes (Carta ➔ Hoja de Ruta ➔ Firma/Destinatario). Requiere integridad referencial estricta.</p>
-        <p><b>Descartado:</b> NoSQL (perdería consistencia transaccional).</p>
-        <p><b>Ventaja:</b> Migraciones versionadas y esquemas fuertemente tipados.</p>
+        <p><b>Por qué:</b> Fuertes relaciones relacionales (Carta ➔ Hoja de Ruta ➔ Firma/Destinatario). Requiere consistencia ACID e integridad referencial estricta.</p>
+        <p><b>Descartado:</b> NoSQL (MongoDB) por pérdida de consistencia transaccional.</p>
+        <p><b>Ventaja:</b> Migraciones automáticas declarativas y TypeScript de extremo a extremo.</p>
       </div>
     </div>
-  </section>
 
-  <!-- ═══════════ 6 · DECISIONES Y SEGURIDAD ═══════════ -->
-  <section class="slide" data-capa="decisio">
-    <div class="ruta"><span>03 · Decisiones Justificadas</span><b class="ruta__n">05 / 06</b></div>
+    <div class="hoja-pie">
+      <span>DFSQA-04 · SISTEMA DE CORRESPONDENCIA UNIOR</span>
+      <span style="font-family:var(--mono); text-transform:none;"><a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">github.com/janc55/correspondencia-unior</a></span>
+      <span>JOSÉ ALFREDO NEGRETTI CORTÉS</span>
+    </div>
+  </article>
+
+  <!-- ═══════════ HOJA 6 · TRAZABILIDAD Y SEGURIDAD ═══════════ -->
+  <article class="hoja-pdf" data-capa="decisio" id="hoja-6">
+    <div class="hoja-cabecera">
+      <span>03 · Decisiones Justificadas · Seguridad</span>
+      <span class="hoja-cabecera__n">Hoja 06 / 07</span>
+    </div>
+
     <h2>Trazabilidad, Autenticación y <b>Acceso Público</b></h2>
+
     <div class="cuerpo col-2">
       <div class="tarjeta">
         <h3>3. Hoja de Ruta Digital & Auditoría</h3>
-        <p><b>Por qué:</b> Elimina la pérdida de correspondencia en el primer tramo. Calcula automáticamente los tiempos por etapa y genera alertas por demoras.</p>
-        <p><b>Descartado:</b> Mantener paralelismo con cuadernos físicos.</p>
+        <p><b>Por qué:</b> Elimina por completo la pérdida de correspondencia institucional. Calcula automáticamente los tiempos por etapa y genera marcas de estancamiento.</p>
+        <p><b>Descartado:</b> Mantener paralelismo con libros y cuadernos físicos manuales.</p>
       </div>
+
       <div class="tarjeta">
         <h3>4. Roles JWT y Consulta Pública</h3>
-        <p><b>Internos:</b> <code>AuthModule</code> con JWT y Guards para restringir permisos según el rol de la autoridad o recepción.</p>
-        <p><b>Externos:</b> Endpoint público de consulta rápida por número correlativo y dato de verificación, sin barreras de registro.</p>
+        <p><b>Usuarios Internos:</b> <code>AuthModule</code> con JWT y Guards para restringir permisos estrictamente según el rol institucional (Recepción, Decanato, Rectorado).</p>
+        <p><b>Público Externo:</b> Endpoint público de consulta ultrarrápida por número correlativo y pin de verificación, sin barreras ni requisitos de registro previo.</p>
       </div>
     </div>
-  </section>
 
-  <!-- ═══════════ 7 · EVOLUCIÓN FUTURA ═══════════ -->
-  <section class="slide" data-capa="evolucion">
-    <div class="ruta"><span>04 · Evolución Futura</span><b class="ruta__n">06 / 06</b></div>
+    <div class="hoja-pie">
+      <span>DFSQA-04 · SISTEMA DE CORRESPONDENCIA UNIOR</span>
+      <span style="font-family:var(--mono); text-transform:none;"><a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">github.com/janc55/correspondencia-unior</a></span>
+      <span>JOSÉ ALFREDO NEGRETTI CORTÉS</span>
+    </div>
+  </article>
+
+  <!-- ═══════════ HOJA 7 · EVOLUCIÓN FUTURA ═══════════ -->
+  <article class="hoja-pdf" data-capa="evolucion" id="hoja-7">
+    <div class="hoja-cabecera">
+      <span>04 · Evolución Futura</span>
+      <span class="hoja-cabecera__n">Hoja 07 / 07</span>
+    </div>
+
     <h2>Evolución Futura y <b>Criterios de Disparo</b></h2>
+
     <div class="cuerpo col-3">
       <div class="tarjeta">
         <span class="rotulo">1. E2E Automatizado</span>
-        <p><b>Playwright / Cypress</b></p>
-        <p><b>Señal de disparo:</b> Regresiones manuales consuman &gt; 4 horas por release o el equipo supere los 3 desarrolladores.</p>
+        <h3 style="font-size:1.1rem; color:var(--acento);">Playwright / Cypress</h3>
+        <p style="font-size:0.92rem;"><b>Señal de disparo:</b> Cuando las pruebas de regresión manuales consuman &gt; 4 horas por release o el equipo supere los 3 desarrolladores activos.</p>
       </div>
+
       <div class="tarjeta">
         <span class="rotulo">2. Caché con Redis</span>
-        <p><b>Redis Cache-Aside</b></p>
-        <p><b>Señal de disparo:</b> Búsquedas por correlativo en consultas públicas tarden &gt; 1 segundo sostenido.</p>
+        <h3 style="font-size:1.1rem; color:var(--acento);">Redis Cache-Aside</h3>
+        <p style="font-size:0.92rem;"><b>Señal de disparo:</b> Cuando las búsquedas por correlativo en consultas públicas tarden &gt; 1 segundo sostenido bajo concurrencia.</p>
       </div>
+
       <div class="tarjeta">
-        <span class="rotulo">3. Colas BullMQ</span>
-        <p><b>BullMQ + Redis</b></p>
-        <p><b>Señal de disparo:</b> Notificaciones SMTP superen 500 emails/día o bloqueen la API principal.</p>
+        <span class="rotulo">3. Colas Asíncronas</span>
+        <h3 style="font-size:1.1rem; color:var(--acento);">BullMQ + Redis</h3>
+        <p style="font-size:0.92rem;"><b>Señal de disparo:</b> Cuando las notificaciones por correo SMTP superen los 500 emails/día o degraden los tiempos de respuesta del API.</p>
       </div>
     </div>
-    <div class="franja"><p>Arquitectura evolutiva: Se incorporan componentes de producción <b>únicamente al detectar la necesidad técnica</b>.</p></div>
-  </section>
 
-</div>
+    <div class="franja">
+      <p>Arquitectura evolutiva prudente: Se incorporan componentes de infraestructura <b>únicamente al detectar la necesidad técnica real</b>.</p>
+    </div>
 
-<!-- Barra inferior de control -->
-<div class="progreso" id="progreso"></div>
-<div class="barra">
-  <button type="button" id="btnPrev">⏮ Anterior</button>
-  <span id="contador">1 / 6</span>
-  <button type="button" id="btnNext">Siguiente ⏭</button>
-  <button type="button" id="btnTheme">☯ Modo</button>
-</div>
+    <div class="hoja-pie">
+      <span>DFSQA-04 · SISTEMA DE CORRESPONDENCIA UNIOR</span>
+      <span style="font-family:var(--mono); text-transform:none;"><a href="https://github.com/janc55/correspondencia-unior" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">github.com/janc55/correspondencia-unior</a></span>
+      <span>JOSÉ ALFREDO NEGRETTI CORTÉS</span>
+    </div>
+  </article>
+
+</main>
 
 <script>
-/* Motor JavaScript de las diapositivas */
-const slides = Array.from(document.querySelectorAll('.slide'));
-const progreso = document.getElementById('progreso');
-const contador = document.getElementById('contador');
-const btnPrev = document.getElementById('btnPrev');
-const btnNext = document.getElementById('btnNext');
+// Manejo de Tema (Oscuro / Claro)
 const btnTheme = document.getElementById('btnTheme');
-
-let idx = 0;
-
-function mostrarSlide(i) {
-  slides[idx].classList.remove('activa');
-  idx = (i + slides.length) % slides.length;
-  slides[idx].classList.add('activa');
-  
-  // Actualizar indicadores
-  const pct = ((idx + 1) / slides.length) * 100;
-  progreso.style.width = pct + '%';
-  contador.textContent = `${idx + 1} / ${slides.length}`;
-}
-
-btnPrev.addEventListener('click', () => mostrarSlide(idx - 1));
-btnNext.addEventListener('click', () => mostrarSlide(idx + 1));
+const themeIcon = document.getElementById('themeIcon');
+const themeLabel = document.getElementById('themeLabel');
+const htmlEl = document.documentElement;
 
 btnTheme.addEventListener('click', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const currentTheme = htmlEl.getAttribute('data-theme');
   if (currentTheme === 'light') {
-    document.documentElement.removeAttribute('data-theme');
+    htmlEl.setAttribute('data-theme', 'dark');
+    themeIcon.textContent = '☯';
+    themeLabel.textContent = 'Modo Claro';
   } else {
-    document.documentElement.setAttribute('data-theme', 'light');
+    htmlEl.setAttribute('data-theme', 'light');
+    themeIcon.textContent = '☀';
+    themeLabel.textContent = 'Modo Oscuro';
   }
 });
 
-// Navegación por teclado (Flechas Izquierda / Derecha)
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight' || e.key === ' ') mostrarSlide(idx + 1);
-  if (e.key === 'ArrowLeft') mostrarSlide(idx - 1);
+// Botón de Exportación Directa a PDF
+const btnPrint = document.getElementById('btnPrint');
+btnPrint.addEventListener('click', () => {
+  window.print();
 });
-
-mostrarSlide(0);
 </script>
 
 </body>
