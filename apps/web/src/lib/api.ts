@@ -37,9 +37,13 @@ import type {
   UserQuery,
 } from './types';
 
-export const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api/v1'
-).replace(/\/+$/, '');
+/**
+ * URL base de la API. Por defecto se usa el proxy same-origin `/api/v1`
+ * (`src/app/api/v1/[...path]/route.ts`), que resuelve la API real en el servidor
+ * con `API_INTERNAL_URL`. Si se define `NEXT_PUBLIC_API_URL` en el build, el
+ * navegador habla directamente con esa URL (requiere CORS configurado).
+ */
+export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/+$/, '');
 
 const ACCESS_TOKEN_KEY = 'unior.accessToken';
 const REFRESH_TOKEN_KEY = 'unior.refreshToken';

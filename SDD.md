@@ -2,7 +2,7 @@
 
 > **Objetivo:** construir un MVP funcional, seguro y demostrable con el menor número de piezas posible, manteniendo una arquitectura profesional y fácil de evolucionar.
 >
-> **Contexto:** Universidad Privada de Oruro (UNIOR). Documento base: *Masterclass de Cierre — Trabajo* y *La arquitectura de su proyecto*.
+> **Contexto:** Universidad Privada de Oruro (UNIOR).
 
 ## 1. Resumen del producto
 
@@ -258,40 +258,40 @@ Si el tiempo de entrega es muy corto, evitar abstraer paquetes compartidos hasta
 
 ## 12. Plan de implementación rápido
 
-### Fase 0 — Arranque (medio día)
+### Fase 0 — Arranque 
 
 - Crear repositorio, workspace, lint, formato y TypeScript estricto.
 - Añadir `.env.example`, Docker Compose con PostgreSQL y healthcheck.
 - Instalar y revisar 2–3 skills elegidas desde skills.sh.
 - Crear esquema inicial de Prisma y documentar decisiones.
 
-### Fase 1 — Base vertical (1 día)
+### Fase 1 — Base vertical 
 
 - Configurar NestJS, Prisma, PostgreSQL, migración inicial y Swagger.
 - Crear Next.js con layout, navegación y componentes básicos.
 - Configurar manejo de errores, validación DTO y logging mínimo.
 
-### Fase 2 — Identidad y registro (1–2 días)
+### Fase 2 — Identidad y registro 
 
 - Login interno, guards, roles y usuarios semilla de desarrollo.
 - Crear correspondencia con correlativo transaccional.
 - Crear hoja de ruta y asignaciones de destinatarios.
 - Implementar listado, búsqueda y detalle.
 
-### Fase 3 — Seguimiento (1–2 días)
+### Fase 3 — Seguimiento 
 
 - Recepción, clasificación y salida por destinatario.
 - Historial de eventos y cálculo de tiempos por tramo.
 - Consulta pública protegida y limitación de intentos.
 - Vista de demoras y alertas básicas.
 
-### Fase 4 — Anexos y notificaciones (1 día)
+### Fase 4 — Anexos y notificaciones 
 
 - Carga y descarga autorizada de anexos.
 - SMTP configurable; registrar resultado de envío.
 - No bloquear el flujo principal si el correo falla; registrar error y permitir reintento administrativo simple.
 
-### Fase 5 — Endurecimiento y demo (1 día)
+### Fase 5 — Endurecimiento y demo 
 
 - Pruebas unitarias de reglas críticas y autorización.
 - Probar permisos entre usuarios y acceso público.

@@ -1,0 +1,15 @@
+# Nixpacks · API NestJS (Dokploy)
+# Seleccionar en la app: NIXPACKS_CONFIG_FILE=nixpacks.api.toml
+# Node 22 se fija con .nvmrc / NIXPACKS_NODE_VERSION.
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = [
+  "pnpm --filter @unior/api prisma:generate",
+  "pnpm --filter @unior/api build"
+]
+
+[start]
+cmd = ["bash", "scripts/start-api.sh"]

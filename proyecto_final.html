@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Masterclass de Cierre · Sistema de Correspondencia UNIOR</title>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   PROYECTO FINAL DIPLOMADO FULL STACK & ADVANCED QA AUTOMATION
+   Estudiante: José Alfredo Negretti Cortés
+   Institución: Universidad Privada de Oruro (UNIOR)
+   Docente: David Morales Vega
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --papel: #0a0e14;
+  --superficie: #111821;
+  --superficie-2: #17202c;
+  --superficie-3: #1e2937;
+  --linea: #263345;
+  --tinta: #eef2f7;
+  --suave: #a3b0c2;
+  --tenue: #66768b;
+
+  --verde: #3fb950;
+  --azul: #58a6ff;
+  --naranja: #f0883e;
+  --violeta: #bc8cff;
+  --rojo: #ff6b61;
+  --amarillo: #e3b341;
+
+  --acento: var(--azul);
+  --acento-suave: rgba(88, 166, 255, .14);
+
+  --sans: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --radio: .9em;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --papel: #f6f8fb;
+  --superficie: #ffffff;
+  --superficie-2: #eef2f7;
+  --superficie-3: #e3e9f1;
+  --linea: #d3dce7;
+  --tinta: #0f1722;
+  --suave: #4a5a6e;
+  --tenue: #7b8a9c;
+  --verde: #1a7f37;
+  --azul: #0969da;
+  --naranja: #bc4c00;
+  --violeta: #8250df;
+  --rojo: #cf222e;
+  --amarillo: #9a6700;
+  color-scheme: light;
+}
+
+[data-capa="caso"]     { --acento: var(--azul);    --acento-suave: rgba(88, 166, 255, .14); }
+[data-capa="arq"]      { --acento: var(--verde);   --acento-suave: rgba(63, 185, 80, .14); }
+[data-capa="decisio"]  { --acento: var(--violeta); --acento-suave: rgba(188, 140, 255, .14); }
+[data-capa="evolucion"]{ --acento: var(--naranja); --acento-suave: rgba(240, 136, 62, .14); }
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: var(--papel); color: var(--tinta);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ───────────────────────── Lienzo 16:9 ───────────────────────── */
+
+.deck { position: fixed; inset: 0; display: grid; place-items: center; }
+
+.slide {
+  --w: min(100vw, 177.78vh);
+  display: none;
+  position: relative;
+  width: var(--w);
+  height: calc(var(--w) * .5625);
+  font-size: calc(var(--w) / 96);
+  padding: 3.4em 4.6em 4.2em;
+  flex-direction: column;
+  gap: 1.5em;
+  overflow: hidden;
+  background:
+    radial-gradient(60em 34em at 100% 0%, var(--acento-suave), transparent 70%),
+    var(--papel);
+  line-height: 1.35;
+}
+.slide.activa { display: flex; }
+
+/* Pie de la diapositiva */
+.slide::after {
+  content: "DFSQA-04 · TRABAJO FINAL: SISTEMA DE CORRESPONDENCIA UNIOR · JOSÉ ALFREDO NEGRETTI CORTÉS";
+  position: absolute; left: 4.6em; right: 4.6em; bottom: 1.5em;
+  font: 500 .7em/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--tenue);
+  padding-top: 1em; border-top: 1px solid var(--linea);
+}
+.slide.portada::after, .slide.separador::after { content: none; }
+
+/* Navegación y Encabezado */
+.ruta {
+  display: flex; justify-content: space-between; align-items: center;
+  font: 600 .78em/1 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--acento);
+  padding-bottom: .9em; position: relative;
+  border-bottom: 1px solid var(--linea);
+}
+.ruta__n { color: var(--tinta); font-weight: 700; font-family: var(--mono); font-size: 1.35em; }
+
+/* Tipografía */
+h1, h2, h3, p, ol, ul, figure, pre { margin: 0; }
+h1 { font-size: 4.5em; line-height: 1.05; letter-spacing: -.035em; font-weight: 800; }
+h2 { font-size: 2.6em; line-height: 1.1; letter-spacing: -.025em; font-weight: 750; }
+h3 { font-size: 1.4em; line-height: 1.2; font-weight: 700; }
+h1 b, h2 b { color: var(--acento); font-weight: inherit; }
+
+p { font-size: 1.25em; color: var(--suave); }
+p b, li b { color: var(--tinta); font-weight: 650; }
+.grande { font-size: 1.5em; color: var(--tinta); line-height: 1.3; }
+
+code, .mono { font-family: var(--mono); font-size: .92em; }
+p code, li code { background: var(--superficie-3); padding: .08em .35em; border-radius: .3em; color: var(--tinta); }
+
+.rotulo {
+  display: inline-block;
+  font: 650 .8em/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--acento);
+}
+.rotulo.ok { color: var(--verde); }
+.rotulo.mal { color: var(--rojo); }
+
+.cuerpo { flex: 1; min-height: 0; display: grid; gap: 1.6em; align-content: stretch; }
+.col-2 { grid-template-columns: 1fr 1fr; }
+.col-3 { grid-template-columns: repeat(3, 1fr); }
+.col-21 { grid-template-columns: 1.55fr 1fr; }
+
+/* Tarjetas */
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  padding: 1.6em 1.8em;
+  display: flex; flex-direction: column; gap: .8em;
+  min-height: 0;
+}
+.tarjeta.acentuada {
+  border-color: color-mix(in srgb, var(--acento) 55%, var(--linea));
+  background: linear-gradient(180deg, var(--acento-suave), transparent 75%), var(--superficie);
+}
+.tarjeta .num { font: 700 2.4em/1 var(--mono); color: var(--acento); }
+.tarjeta ul, .tarjeta ol { padding-left: 1.2em; display: grid; gap: .5em; }
+.tarjeta li { font-size: 1.2em; color: var(--suave); }
+.tarjeta li::marker { color: var(--acento); }
+
+.franja {
+  display: flex; align-items: center; gap: 1.2em;
+  padding: 1em 1.4em;
+  border-left: .3em solid var(--acento);
+  background: var(--superficie);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+.franja p { font-size: 1.35em; color: var(--tinta); }
+.franja b { color: var(--acento); }
+
+/* Código y consola */
+pre.codigo, pre.consola {
+  font: 500 1.1em/1.5 var(--mono);
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  padding: 1.2em 1.4em;
+  white-space: pre; overflow: hidden;
+  color: var(--tinta);
+}
+pre.consola { background: #06090d; }
+pre b { color: var(--rojo); }
+pre em { color: var(--azul); font-style: normal; }
+pre i { color: var(--tenue); font-style: italic; }
+pre .ok { color: var(--verde); font-weight: 600; }
+
+/* Tablas */
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 1.2em; }
+th, td { text-align: left; padding: .75em 1em; border-bottom: 1px solid var(--linea); }
+th { font: 650 .78em/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--suave); }
+td { color: var(--suave); }
+td:first-child { color: var(--tinta); font-weight: 600; }
+.tabla-envoltura { background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; padding: .4em 1em; }
+
+/* Portada y Separador */
+.slide.portada {
+  padding: 4.6em 5.4em; display: flex; justify-content: center;
+  background: radial-gradient(70em 40em at 92% 8%, var(--acento-suave), transparent 70%), var(--papel);
+}
+.slide.portada.activa { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; align-items: center; }
+.portada__texto { display: flex; flex-direction: column; gap: 1.4em; }
+.portada .eyebrow { font: 650 .85em/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--acento); }
+.portada .sub { font-size: 1.6em; color: var(--suave); }
+.regla { width: 5em; height: .3em; border: 0; margin: 0; background: var(--acento); border-radius: .2em; }
+.meta { display: flex; flex-direction: column; gap: .8em; margin-top: 1em; }
+.meta span { font: 600 .78em/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--tenue); }
+.meta b { font: 650 1.4em/1.2 var(--sans); text-transform: none; color: var(--tinta); display: block; }
+
+.slide.separador { padding: 5em 5.4em; }
+.slide.separador.activa { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; align-items: center; }
+.separador__n { font: 800 10em/.85 var(--mono); letter-spacing: -.06em; color: var(--acento); }
+.separador .temas { list-style: none; padding: 0; display: grid; gap: .9em; counter-reset: t; }
+.separador .temas li {
+  counter-increment: t; display: grid; grid-template-columns: 2.6em 1fr; align-items: center;
+  font-size: 1.35em; color: var(--tinta); padding: .9em 1.1em; background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio);
+}
+.separador .temas li::before { content: counter(t, decimal-leading-zero); font: 700 .9em var(--mono); color: var(--acento); }
+
+/* Controles */
+.progreso { position: fixed; left: 0; bottom: 0; height: 3px; background: var(--acento); z-index: 20; transition: width .25s; width: 0; }
+.barra {
+  position: fixed; left: 50%; bottom: .8em; transform: translateX(-50%);
+  display: flex; align-items: center; gap: .6em; z-index: 30; padding: .4em .8em; border-radius: 99em;
+  background: color-mix(in srgb, var(--superficie-2) 92%, transparent); border: 1px solid var(--linea);
+  font: 500 13px/1 var(--sans); color: var(--suave); opacity: .3; transition: opacity .2s;
+}
+.barra:hover { opacity: 1; }
+.barra button { font: inherit; color: var(--tinta); background: var(--superficie-3); border: 1px solid var(--linea); border-radius: 99em; padding: .4em .8em; cursor: pointer; }
+</style>
+</head>
+
+<body>
+
+<div class="deck">
+
+  <!-- ═══════════ 1 · PORTADA ═══════════ -->
+  <section class="slide portada activa" data-capa="caso">
+    <div class="portada__texto">
+      <span class="eyebrow">Universidad Privada de Oruro · Trabajos de Cierre</span>
+      <h1>Sistema de Correspondencia <b>UNIOR</b></h1>
+      <hr class="regla">
+      <p class="sub">Digitalización, Hoja de Ruta Digital y Seguimiento de Correspondencia Institucional en Tiempo Real</p>
+      <div class="meta">
+        <div><span>Postgraduante:</span><b>José Alfredo Negretti Cortés</b></div>
+        <div><span>Programa:</span><b>Diplomado en Full Stack Development & Advanced QA Automation</b></div>
+        <div><span>Docente:</span><b>David Morales Vega</b></div>
+      </div>
+    </div>
+    <pre class="consola"><span class="tenue">// Trazabilidad de Hoja de Ruta Digital</span>
+<span class="tenue">Correlativo: UNIOR-2026-0842</span>
+----------------------------------------
+1. Recepción (Ventanilla)   <span class="ok">10:15 [REGISTRADO]</span>
+2. Vicerrectorado Académico  <span class="ok">11:30 [EN REVISIÓN]</span>
+3. Decanato de Medicina      <span class="ok">14:20 [DERIVADO]</span>
+----------------------------------------
+<span class="ok">✓ Trazabilidad en tiempo real &lt; 5s</span>
+<span class="ok">✓ 0% Correspondencia extraviada</span></pre>
+  </section>
+
+  <!-- ═══════════ 2 · EL CASO DE ESTUDIO ═══════════ -->
+  <section class="slide" data-capa="caso">
+    <div class="ruta"><span>01 · Caso de Estudio</span><b class="ruta__n">01 / 06</b></div>
+    <h2>El Caso de Estudio: <b>Sustitución Digital</b></h2>
+    <div class="cuerpo col-2">
+      <div class="tarjeta acentuada">
+        <span class="rotulo ok">Propósito del Sistema</span>
+        <p>Digitaliza el registro e internas/externas de la <b>UNIOR</b>, reemplazando el cuaderno físico por un correlativo digital y hoja de ruta con hasta 3 destinatarios.</p>
+        <ul>
+          <li><b>Marca de Estado</b>: Urgente, Archivar, Preparar Respuesta.</li>
+          <li><b>Trazabilidad Temporal</b>: Firma de recepción y salida con registro fecha-hora.</li>
+          <li><b>Consulta Pública</b>: Seguimiento externo sin requerir autenticación.</li>
+        </ul>
+      </div>
+      <div class="tarjeta">
+        <span class="rotulo">Estimación y Volumetría</span>
+        <ul>
+          <li><b>Volumen Mensual</b>: ~300 - 400 cartas/mes (~15 por día hábil).</li>
+          <li><b>Horas Pico</b>: 11:00-15:00 y 17:00-19:00 (concentran el 60% del tráfico).</li>
+          <li><b>Concurrencia</b>: ~20 - 25 usuarios internos activos.</li>
+          <li><b>Crecimiento Anual</b>: ~5.000 reg/año (1-3 GB/año con escaneos anexos).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="franja"><p>Objetivo Central: Pasar de un proceso manual en papel a un <b>seguimiento auditable e ininterrumpido</b>.</p></div>
+  </section>
+
+  <!-- ═══════════ 3 · KPIS Y ROLES ═══════════ -->
+  <section class="slide" data-capa="caso">
+    <div class="ruta"><span>01 · Caso de Estudio</span><b class="ruta__n">02 / 06</b></div>
+    <h2>Usuarios e Indicadores Clave <b>(KPIs)</b></h2>
+    <div class="cuerpo col-2">
+      <div class="tarjeta">
+        <span class="rotulo">Roles del Sistema</span>
+        <ul>
+          <li><b>Ventanilla / Recepción</b>: Registra cartas externas y las deriva al primer tramo.</li>
+          <li><b>Destinatarios Internos</b>: Reciben, marcan estado, firman recepción/salida y derivan.</li>
+          <li><b>Seguimiento y Auditoría</b>: Secretarías y auditoría que supervisan cuellos de botella.</li>
+          <li><b>Público Externo</b>: Consulta el estado mediante número correlativo + dato de verificación.</li>
+        </ul>
+      </div>
+      <div class="tarjeta acentuada">
+        <span class="rotulo ok">Indicadores Clave (KPIs)</span>
+        <div style="display:grid; gap:0.6em; margin-top:0.3em;">
+          <div><b class="num">&lt; 24 hrs</b><p style="font-size:1em">Tiempo medio de derivación esperado por tramo con alerta de estancamiento.</p></div>
+          <div><b class="num">0% Perdidos</b><p style="font-size:1em">Meta estricta de trámites sin trazabilidad o desatendidos.</p></div>
+          <div><b class="num">&lt; 5 sec</b><p style="font-size:1em">Búsqueda y respuesta del estado mediante número correlativo.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 4 · DIAGRAMA DE ARQUITECTURA ═══════════ -->
+  <section class="slide" data-capa="arq">
+    <div class="ruta"><span>02 · Arquitectura</span><b class="ruta__n">03 / 06</b></div>
+    <h2>Arquitectura del Sistema: <b>Monolito Modular</b></h2>
+    <div class="cuerpo col-21">
+      <pre class="codigo" style="font-size:0.95em"><b>[ Navegador Web / Móvil ]</b>
+        │
+        │  HTTPS (REST / JSON /api/v1)
+        ▼
+<b>[ Frontend SPA: React + Vite ]</b>
+        │
+        │  REST API Versionada
+        ▼
+<b>[ Backend Monolito Modular: NestJS ]</b>
+  ├── AuthModule (JWT + Guards)
+  ├── RegistroModule (Correlativos)
+  ├── HojaRutaModule (Derivaciones)
+  ├── SeguimientoModule (Auditoría)
+  └── NotificacionesModule (SMTP Directo)
+        │
+        ├──► <b>[ PostgreSQL + Prisma ORM ]</b> (Persistencia Tipada)
+        └──► <b>[ Almacenamiento Local / MinIO ]</b> (Archivos Escaneados)</pre>
+      <div class="tarjeta">
+        <span class="rotulo ok">Estructura del Backend</span>
+        <ul>
+          <li><b>Controllers</b>: Entrada HTTP, manejo de endpoints REST.</li>
+          <li><b>Services</b>: Reglas de negocio e interacciones dominiales.</li>
+          <li><b>DTOs</b>: Validación declarativa con <code>class-validator</code>.</li>
+          <li><b>Repositories</b>: Acceso tipado a datos mediante Prisma ORM.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="franja"><p>Arquitectura simplificada sin bus de mensajes en fase inicial: <b>alta cohesión y bajo acoplamiento</b>.</p></div>
+  </section>
+
+  <!-- ═══════════ 5 · DECISIONES ARQUITECTÓNICAS ═══════════ -->
+  <section class="slide" data-capa="decisio">
+    <div class="ruta"><span>03 · Decisiones Justificadas</span><b class="ruta__n">04 / 06</b></div>
+    <h2>Decisiones Arquitectónicas <b>Justificadas</b></h2>
+    <div class="cuerpo col-2">
+      <div class="tarjeta">
+        <h3>1. Monolito Modular NestJS</h3>
+        <p><b>Por qué:</b> Carga baja (15 trámites/día, 25 usuarios). Un solo despliegue reduce sobrecostos de infraestructura y red.</p>
+        <p><b>Descartado:</b> Microservicios iniciales (sobreingeniería operativa).</p>
+        <p><b>Reversión:</b> NestJS permite desacoplar módulos (ej. Notificaciones) a microservicios si escala el tráfico.</p>
+      </div>
+      <div class="tarjeta">
+        <h3>2. PostgreSQL + Prisma ORM</h3>
+        <p><b>Por qué:</b> Relaciones fuertes (Carta ➔ Hoja de Ruta ➔ Firma/Destinatario). Requiere integridad referencial estricta.</p>
+        <p><b>Descartado:</b> NoSQL (perdería consistencia transaccional).</p>
+        <p><b>Ventaja:</b> Migraciones versionadas y esquemas fuertemente tipados.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 6 · DECISIONES Y SEGURIDAD ═══════════ -->
+  <section class="slide" data-capa="decisio">
+    <div class="ruta"><span>03 · Decisiones Justificadas</span><b class="ruta__n">05 / 06</b></div>
+    <h2>Trazabilidad, Autenticación y <b>Acceso Público</b></h2>
+    <div class="cuerpo col-2">
+      <div class="tarjeta">
+        <h3>3. Hoja de Ruta Digital & Auditoría</h3>
+        <p><b>Por qué:</b> Elimina la pérdida de correspondencia en el primer tramo. Calcula automáticamente los tiempos por etapa y genera alertas por demoras.</p>
+        <p><b>Descartado:</b> Mantener paralelismo con cuadernos físicos.</p>
+      </div>
+      <div class="tarjeta">
+        <h3>4. Roles JWT y Consulta Pública</h3>
+        <p><b>Internos:</b> <code>AuthModule</code> con JWT y Guards para restringir permisos según el rol de la autoridad o recepción.</p>
+        <p><b>Externos:</b> Endpoint público de consulta rápida por número correlativo y dato de verificación, sin barreras de registro.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 7 · EVOLUCIÓN FUTURA ═══════════ -->
+  <section class="slide" data-capa="evolucion">
+    <div class="ruta"><span>04 · Evolución Futura</span><b class="ruta__n">06 / 06</b></div>
+    <h2>Evolución Futura y <b>Criterios de Disparo</b></h2>
+    <div class="cuerpo col-3">
+      <div class="tarjeta">
+        <span class="rotulo">1. E2E Automatizado</span>
+        <p><b>Playwright / Cypress</b></p>
+        <p><b>Señal de disparo:</b> Regresiones manuales consuman &gt; 4 horas por release o el equipo supere los 3 desarrolladores.</p>
+      </div>
+      <div class="tarjeta">
+        <span class="rotulo">2. Caché con Redis</span>
+        <p><b>Redis Cache-Aside</b></p>
+        <p><b>Señal de disparo:</b> Búsquedas por correlativo en consultas públicas tarden &gt; 1 segundo sostenido.</p>
+      </div>
+      <div class="tarjeta">
+        <span class="rotulo">3. Colas BullMQ</span>
+        <p><b>BullMQ + Redis</b></p>
+        <p><b>Señal de disparo:</b> Notificaciones SMTP superen 500 emails/día o bloqueen la API principal.</p>
+      </div>
+    </div>
+    <div class="franja"><p>Arquitectura evolutiva: Se incorporan componentes de producción <b>únicamente al detectar la necesidad técnica</b>.</p></div>
+  </section>
+
+</div>
+
+<!-- Barra inferior de control -->
+<div class="progreso" id="progreso"></div>
+<div class="barra">
+  <button type="button" id="btnPrev">⏮ Anterior</button>
+  <span id="contador">1 / 6</span>
+  <button type="button" id="btnNext">Siguiente ⏭</button>
+  <button type="button" id="btnTheme">☯ Modo</button>
+</div>
+
+<script>
+/* Motor JavaScript de las diapositivas */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const progreso = document.getElementById('progreso');
+const contador = document.getElementById('contador');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnTheme = document.getElementById('btnTheme');
+
+let idx = 0;
+
+function mostrarSlide(i) {
+  slides[idx].classList.remove('activa');
+  idx = (i + slides.length) % slides.length;
+  slides[idx].classList.add('activa');
+  
+  // Actualizar indicadores
+  const pct = ((idx + 1) / slides.length) * 100;
+  progreso.style.width = pct + '%';
+  contador.textContent = `${idx + 1} / ${slides.length}`;
+}
+
+btnPrev.addEventListener('click', () => mostrarSlide(idx - 1));
+btnNext.addEventListener('click', () => mostrarSlide(idx + 1));
+
+btnTheme.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  if (currentTheme === 'light') {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+});
+
+// Navegación por teclado (Flechas Izquierda / Derecha)
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') mostrarSlide(idx + 1);
+  if (e.key === 'ArrowLeft') mostrarSlide(idx - 1);
+});
+
+mostrarSlide(0);
+</script>
+
+</body>
+</html>

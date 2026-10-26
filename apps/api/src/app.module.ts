@@ -23,6 +23,7 @@ import { AttachmentsModule } from './attachments/attachments.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AuditModule } from './audit/audit.module';
 import { AuditInterceptor } from './audit/audit.interceptor';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AuditInterceptor } from './audit/audit.interceptor';
     ]),
     PrismaModule,
     AuditModule,
+    HealthModule,
     AuthModule,
     UsersModule,
     DepartmentsModule,

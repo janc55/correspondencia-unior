@@ -1,0 +1,21 @@
+# Contexto de build (Nixpacks/Docker)
+.git
+.gitignore
+.github
+node_modules
+**/node_modules
+.next
+**/.next
+dist
+**/dist
+coverage
+**/coverage
+.pgdata
+storage
+apps/api/storage
+docs
+*.md
+!README.md
+.env
+.env.*
+!.env.example
