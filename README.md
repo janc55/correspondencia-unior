@@ -92,6 +92,8 @@ pnpm dev:web          # http://localhost:3000
 
 El frontend usa `NEXT_PUBLIC_API_URL` (por defecto `http://localhost:3001/api/v1`). Si cambias el puerto de la API, define esa variable en `apps/web/.env.local`.
 
+> **Windows y sin Docker:** guía paso a paso en [`docs/local-setup.md`](docs/local-setup.md), incluida la alternativa de levantar el clúster PostgreSQL local del repositorio (`.pgdata`, puerto 5433) y el recorrido de prueba con datos demo.
+
 ### Variables de entorno
 
 Todas están descritas y comentadas en `.env.example`. Las mínimas para desarrollo:
