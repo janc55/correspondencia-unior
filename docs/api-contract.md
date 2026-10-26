@@ -4,6 +4,24 @@ Base URL de desarrollo: `http://localhost:3001/api/v1`
 Documentación interactiva (Swagger): `http://localhost:3001/api/docs`
 Todas las fechas son ISO-8601 en UTC. La zona horaria institucional es `America/La_Paz` (UTC-4) y se usa solo para presentación.
 
+## Salud
+
+### GET /health
+
+Público, sin autenticación. Usado por el healthcheck de Dokploy/Traefik.
+
+```json
+{
+  "status": "ok",
+  "database": "up",
+  "timestamp": "2026-02-10T12:00:00.000Z",
+  "uptimeSeconds": 120,
+  "version": "1.0.0"
+}
+```
+
+Si la base de datos no responde devuelve `503` con `code: "SERVICE_UNAVAILABLE"`.
+
 ## Autenticación
 
 Cabecera: `Authorization: Bearer <accessToken>`.

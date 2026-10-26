@@ -163,6 +163,17 @@ pnpm db:reset         # reinicia la base y vuelve a sembrar
 node scripts/smoke.mjs  # prueba de humo end-to-end contra la API en ejecución
 ```
 
+### Despliegue (Dokploy + Nixpacks)
+
+El repositorio ya incluye lo necesario para desplegar tres servicios (PostgreSQL, API y web) en [Dokploy](https://dokploy.com) con Nixpacks:
+
+- `nixpacks.api.toml` y `nixpacks.web.toml` (se eligen con `NIXPACKS_CONFIG_FILE`).
+- `scripts/start-api.sh` (aplica `prisma migrate deploy`, bootstrap opcional y arranca NestJS) y `scripts/start-web.sh`.
+- Proxy same-origin `/api/v1/*` en Next: el navegador no llama a la API directamente, así que no hace falta CORS ni `NEXT_PUBLIC_API_URL`.
+- `GET /api/v1/health` para el healthcheck del orquestador.
+
+Guía paso a paso, variables de entorno, volúmenes y respaldos: [`docs/deployment-dokploy.md`](docs/deployment-dokploy.md).
+
 ---
 
 ## 7. Pruebas
@@ -174,7 +185,7 @@ node scripts/smoke.mjs  # prueba de humo end-to-end contra la API en ejecución
   # 7 suites · 25 pruebas
   ```
 
-- **Humo end-to-end (`scripts/smoke.mjs`):** 44 verificaciones contra la API real con la base sembrada: login, permisos cruzados, registro con correlativo, flujo completo del tramo, validaciones, consulta pública (código correcto/incorrecto/inexistente), anexos (carga, descarga, archivo no permitido), demoras, auditoría, archivo lógico y ciclo de refresh/logout.
+- **Humo end-to-end (`scripts/smoke.mjs`):** 54 verificaciones contra la API real con la base sembrada: login, permisos cruzados, registro con correlativo, flujo completo del tramo, validaciones, consulta pública (código correcto/incorrecto/inexistente), anexos (carga, descarga, archivo no permitido), demoras, auditoría, archivo lógico y ciclo de refresh/logout. También puede ejecutarse a través del proxy del frontend: `$env:API_BASE_URL='http://localhost:3000/api/v1'; node scripts/smoke.mjs`.
 
   ```bash
   pnpm dev:api        # en otra terminal
@@ -207,4 +218,4 @@ node scripts/smoke.mjs  # prueba de humo end-to-end contra la API en ejecución
 - **Sin E2E de navegador** en esta entrega (la prueba de humo cubre la API y el build de tipos del frontend).
 - **`prisma migrate dev` puede detectar drift** si se modificó el esquema manualmente: en ese caso usar `pnpm db:reset` (solo desarrollo).
 
-Más detalle en [`docs/architecture.md`](docs/architecture.md), [`docs/api.md`](docs/api.md) y [`docs/decisions.md`](docs/decisions.md).
+Más detalle en [`docs/architecture.md`](docs/architecture.md), [`docs/api.md`](docs/api.md), [`docs/decisions.md`](docs/decisions.md), [`docs/local-setup.md`](docs/local-setup.md) y [`docs/deployment-dokploy.md`](docs/deployment-dokploy.md).

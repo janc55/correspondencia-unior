@@ -3,7 +3,7 @@
 # Node 22 se fija con .nvmrc / NIXPACKS_NODE_VERSION.
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile"]
+cmds = ["pnpm install --frozen-lockfile --prod=false"]
 
 [phases.build]
 cmds = [
@@ -12,4 +12,4 @@ cmds = [
 ]
 
 [start]
-cmd = ["bash", "scripts/start-api.sh"]
+cmd = "bash scripts/start-api.sh"

@@ -108,13 +108,16 @@ Reglas de integridad:
 - Validación de entrada estricta, límites de tamaño, CORS, helmet, throttling y mensajes de error sin datos internos.
 - Anexos con validación de firma binaria, claves aleatorias y descarga autenticada.
 - Auditoría con actor y `requestId`, sin secretos ni cuerpos de petición.
+- **Proxy same-origin** en el frontend (`apps/web/src/app/api/v1/[...path]/route.ts`): el navegador nunca llama a la API directamente, de modo que la API puede quedar en la red interna del orquestador y no se necesitan reglas CORS ni URLs de API quemadas en el build.
+- **Sonda de salud** pública `GET /api/v1/health` (servicio + base de datos) para healthchecks y balanceadores.
 
 ## 7. Operación
 
 - **Desarrollo:** PostgreSQL vía Docker Compose; migraciones con `prisma migrate dev`; seed de datos no productivos.
-- **Producción:** `prisma migrate deploy`, `pnpm build`, proceso Node detrás de HTTPS, volumen persistente para `STORAGE_DIR`, respaldo cifrado de base de datos y archivos, y SMTP institucional.
-- **Observabilidad mínima:** logs estructurados de Nest con `X-Request-Id` correlacionable con auditoría; los errores 5xx se registran con traza solo en el servidor.
-- **Recuperación:** restaurar respaldo de PostgreSQL, volver a desplegar la misma versión y verificar `/api/v1/tracking/stats` y el login.
+- **Despliegue:** Dokploy con Nixpacks (`nixpacks.api.toml`, `nixpacks.web.toml`); ver [`deployment-dokploy.md`](deployment-dokploy.md).
+- **Producción:** `prisma migrate deploy` al arrancar, `pnpm build`, proceso Node detrás de HTTPS, volumen persistente para `STORAGE_DIR`, respaldo cifrado de base de datos y archivos, y SMTP institucional.
+- **Observabilidad mínima:** logs estructurados de Nest con `X-Request-Id` correlacionable con auditoría; los errores 5xx se registran con traza solo en el servidor; `GET /api/v1/health` para el orquestador.
+- **Recuperación:** restaurar respaldo de PostgreSQL, volver a desplegar la misma versión y verificar `/api/v1/health`, `/api/v1/tracking/stats` y el login.
 
 ## 8. Evolución prevista
 

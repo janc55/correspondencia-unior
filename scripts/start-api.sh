@@ -6,8 +6,12 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-echo "[api] Aplicando migraciones de Prisma..."
-pnpm --filter @unior/api exec prisma migrate deploy
+if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+  echo "[api] Aplicando migraciones de Prisma..."
+  pnpm --filter @unior/api exec prisma migrate deploy
+else
+  echo "[api] RUN_MIGRATIONS=false: se omiten migraciones (usar pre-deploy)."
+fi
 
 if [ "${RUN_SEED:-false}" = "true" ]; then
   echo "[api] RUN_SEED=true: cargando datos de demostración..."

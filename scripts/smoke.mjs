@@ -66,6 +66,12 @@ async function main() {
 
   console.log('Autenticación');
   check('login devuelve token y usuario', Boolean(admin.accessToken && admin.user?.email));
+  const health = await request('GET', '/health');
+  check(
+    'health público responde ok con base de datos arriba',
+    health.status === 200 && health.data.status === 'ok' && health.data.database === 'up',
+    `status ${health.status}`,
+  );
   const badLogin = await request('POST', '/auth/login', {
     body: { email: 'admin@unior.edu.bo', password: 'incorrecta123' },
   });

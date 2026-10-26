@@ -56,7 +56,11 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
       body = await request.arrayBuffer();
     } catch {
       return Response.json(
-        { statusCode: 400, code: 'BAD_REQUEST', message: 'No se pudo leer el cuerpo de la petición.' },
+        {
+          statusCode: 400,
+          code: 'BAD_REQUEST',
+          message: 'No se pudo leer el cuerpo de la petición.',
+        },
         { status: 400 },
       );
     }

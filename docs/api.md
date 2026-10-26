@@ -31,6 +31,7 @@ Todas las respuestas incluyen `X-Request-Id`; la auditoría lo almacena para tra
 
 | Método | Ruta                                 | Roles                             | Descripción                                     |
 | ------ | ------------------------------------ | --------------------------------- | ----------------------------------------------- |
+| GET    | `/health`                            | público                           | Sonda de salud (servicio + base de datos).      |
 | POST   | `/auth/login`                        | público                           | Login; devuelve access + refresh + usuario.     |
 | POST   | `/auth/refresh`                      | público                           | Rota el refresh token (detecta reutilización).  |
 | POST   | `/auth/logout`                       | público                           | Revoca el refresh token. `204`.                 |

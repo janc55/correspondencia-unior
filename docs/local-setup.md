@@ -73,12 +73,16 @@ O ambos en una: `pnpm dev`.
 Verificación rápida:
 
 ```powershell
-curl.exe http://localhost:3001/api/v1/tracking/stats   # 401: la API está viva y protegida
-start http://localhost:3001/api/docs                   # Swagger
-start http://localhost:3000                            # interfaz
+curl.exe http://localhost:3001/api/v1/health            # 200 {"status":"ok","database":"up",...}
+curl.exe http://localhost:3001/api/v1/tracking/stats    # 401: la API está viva y protegida
+curl.exe http://localhost:3000/api/v1/health            # 200: proxy del frontend hacia la API
+start http://localhost:3001/api/docs                    # Swagger
+start http://localhost:3000                             # interfaz
 ```
 
-En una terminal donde no tengas `curl`, `Invoke-WebRequest http://localhost:3001/api/v1/tracking/stats` devuelve el mismo `401`.
+En una terminal donde no tengas `curl`, `Invoke-WebRequest http://localhost:3001/api/v1/health` devuelve el mismo `200`.
+
+> El frontend ya no llama a `http://localhost:3001` desde el navegador: usa `/api/v1/*` en su propio origen y Next lo reenvía a `API_INTERNAL_URL` (por defecto `http://localhost:3001/api/v1`). Por eso no hay CORS en desarrollo y el mismo código funciona en Dokploy.
 
 ## 4. Recorrido funcional (5 minutos)
 

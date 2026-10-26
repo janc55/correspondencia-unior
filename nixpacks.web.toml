@@ -3,10 +3,10 @@
 # El puerto lo toma de PORT (3000 por defecto).
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile"]
+cmds = ["pnpm install --frozen-lockfile --prod=false"]
 
 [phases.build]
 cmds = ["pnpm --filter @unior/web build"]
 
 [start]
-cmd = ["bash", "scripts/start-web.sh"]
+cmd = "bash scripts/start-web.sh"

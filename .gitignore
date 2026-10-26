@@ -11,8 +11,7 @@ build/
 
 # Entorno y secretos
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
 
 # Almacenamiento local de anexos

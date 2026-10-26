@@ -78,7 +78,9 @@ async function main(): Promise<void> {
     },
   });
 
-  console.log(`Administrador ${email} creado${departmentCode ? ` (departamento ${departmentCode})` : ''}.`);
+  console.log(
+    `Administrador ${email} creado${departmentCode ? ` (departamento ${departmentCode})` : ''}.`,
+  );
 }
 
 main()
