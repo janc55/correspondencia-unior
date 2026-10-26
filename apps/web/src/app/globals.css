@@ -1,0 +1,225 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────────────────────────────────────────
+   UNIOR · Sistema de Registro y Seguimiento de Correspondencia
+   Tokens institucionales (Tailwind CSS v4 vía @theme).
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif;
+
+  --color-unior-50: #eef3fa;
+  --color-unior-100: #dce7f5;
+  --color-unior-200: #b9cde8;
+  --color-unior-300: #8bacd6;
+  --color-unior-400: #5584bd;
+  --color-unior-500: #2f63a1;
+  --color-unior-600: #1d4e89;
+  --color-unior-700: #16406f;
+  --color-unior-800: #10325a;
+  --color-unior-900: #0b2a5b;
+  --color-unior-950: #071b3a;
+
+  --color-gold-50: #fdf9e7;
+  --color-gold-100: #f9f0c4;
+  --color-gold-200: #f0dd8c;
+  --color-gold-300: #e3c552;
+  --color-gold-400: #d4b02f;
+  --color-gold-500: #c9a227;
+  --color-gold-600: #a47f1c;
+  --color-gold-700: #7d6015;
+
+  --color-ink: #0f172a;
+  --color-mist: #f6f8fb;
+  --color-line: #e2e8f0;
+
+  --radius-card: 0.75rem;
+
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 10px 30px -22px rgba(11, 42, 91, 0.45);
+  --shadow-raised: 0 18px 45px -24px rgba(11, 42, 91, 0.55);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-mist);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-unior-900);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-unior-600);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-unior-100);
+    color: var(--color-unior-900);
+  }
+}
+
+/* Clases base dentro de `components` para que las utilidades de Tailwind
+   puedan sobrescribirlas (por ejemplo `pr-10` en un campo con icono). */
+@layer components {
+  .card {
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-line);
+    background-color: #ffffff;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-flat {
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-line);
+    background-color: #ffffff;
+  }
+
+  .field-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .field-control {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-line);
+    background-color: #ffffff;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+    transition:
+      border-color 120ms ease,
+      box-shadow 120ms ease;
+  }
+
+  .field-control::placeholder {
+    color: #94a3b8;
+  }
+
+  .field-control:hover:not(:disabled) {
+    border-color: #cbd5e1;
+  }
+
+  .field-control:focus {
+    outline: none;
+    border-color: var(--color-unior-600);
+    box-shadow: 0 0 0 3px rgba(29, 78, 137, 0.14);
+  }
+
+  .field-control:disabled {
+    background-color: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+
+  .field-control[aria-invalid='true'] {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+  }
+
+  select.field-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.25rem;
+    padding-right: 2rem;
+  }
+
+  .skeleton {
+    border-radius: 0.5rem;
+    background: linear-gradient(90deg, #e9eef5 25%, #f4f7fb 37%, #e9eef5 63%);
+    background-size: 400% 100%;
+    animation: unior-shimmer 1.6s ease-in-out infinite;
+  }
+
+  .nav-drawer {
+    animation: unior-slide-in 180ms ease-out;
+  }
+
+  .toast-item {
+    animation: unior-toast-in 180ms ease-out;
+  }
+
+  .fade-in {
+    animation: unior-fade-in 200ms ease-out;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .public-code {
+    font-family:
+      ui-monospace, SFMono-Regular, 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
+    letter-spacing: 0.14em;
+  }
+}
+
+@keyframes unior-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes unior-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes unior-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes unior-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

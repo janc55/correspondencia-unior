@@ -1,0 +1,46 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Builds
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# Entorno y secretos
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Almacenamiento local de anexos
+storage/
+apps/api/storage/
+
+# Prisma
+apps/api/generated/
+apps/api/prisma/*.db
+apps/api/prisma/*.db-journal
+
+# Clúster PostgreSQL local usado cuando no hay Docker disponible
+.pgdata/
+
+# Cobertura y pruebas
+coverage/
+*.lcov
+test-results/
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*

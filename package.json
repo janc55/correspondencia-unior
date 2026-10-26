@@ -1,0 +1,31 @@
+{
+  "name": "unior-correspondencia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de Registro y Seguimiento de Correspondencia - Universidad Privada de Oruro (UNIOR)",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @unior/api --filter @unior/web dev",
+    "dev:api": "pnpm --filter @unior/api dev",
+    "dev:web": "pnpm --filter @unior/web dev",
+    "build": "pnpm --filter @unior/api build && pnpm --filter @unior/web build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm --filter @unior/api exec tsc --noEmit && pnpm --filter @unior/web exec tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm --filter @unior/api test",
+    "test:smoke": "node scripts/smoke.mjs",
+    "db:generate": "pnpm --filter @unior/api prisma:generate",
+    "db:migrate": "pnpm --filter @unior/api prisma:migrate",
+    "db:deploy": "pnpm --filter @unior/api prisma:deploy",
+    "db:seed": "pnpm --filter @unior/api prisma:seed",
+    "db:studio": "pnpm --filter @unior/api prisma:studio",
+    "db:reset": "pnpm --filter @unior/api prisma:reset"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}

@@ -1,0 +1,300 @@
+// Esquema de datos — Sistema de Registro y Seguimiento de Correspondencia UNIOR
+// Aplicar cambios con: pnpm --filter @unior/api prisma:migrate
+// Convenciones: identificadores UUID, fechas en UTC, borrado lógico en correspondencias.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  RECEPCION
+  DESTINATARIO
+  SEGUIMIENTO
+}
+
+enum Direction {
+  INTERNA
+  EXTERNA
+}
+
+enum CorrespondenceStatus {
+  REGISTRADA
+  EN_TRAMITE
+  ATENDIDA
+  ARCHIVADA
+}
+
+enum RouteRecipientStatus {
+  PENDIENTE
+  RECIBIDO
+  CLASIFICADO
+  DESPACHADO
+}
+
+enum RecipientAction {
+  URGENTE
+  ARCHIVAR
+  PREPARAR_RESPUESTA
+}
+
+enum TrackingEventType {
+  REGISTRO
+  RECEPCION
+  CLASIFICACION
+  DESPACHO
+  ANEXO
+  ARCHIVADO
+  CONSULTA_PUBLICA
+  NOTIFICACION
+  ACTUALIZACION
+}
+
+enum NotificationStatus {
+  PENDIENTE
+  ENVIADO
+  FALLIDO
+  OMITIDO
+}
+
+model Department {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  code      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users           User[]
+  routeRecipients RouteRecipient[]
+
+  @@map("departments")
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(DESTINATARIO)
+  departmentId String?   @db.Uuid
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  department          Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  createdCorrespondences Correspondence[] @relation("CorrespondenceCreatedBy")
+  createdRouteSheets  RouteSheet[]    @relation("RouteSheetCreatedBy")
+  archivedCorrespondences Correspondence[] @relation("CorrespondenceArchivedBy")
+  routeRecipients     RouteRecipient[]
+  attachments         Attachment[]
+  trackingEvents      TrackingEvent[]
+  auditLogs           AuditLog[]
+  refreshTokens       RefreshToken[]
+
+  @@index([role])
+  @@index([departmentId])
+  @@map("users")
+}
+
+model Correspondence {
+  id                String               @id @default(uuid()) @db.Uuid
+  trackingNumber    String               @unique
+  year              Int
+  sequence          Int
+  direction         Direction
+  subject           String
+  summary           String?
+  senderName        String
+  senderOrganization String?
+  senderReference   String?
+  registeredAt      DateTime             @default(now())
+  createdById       String               @db.Uuid
+  currentStatus     CorrespondenceStatus @default(REGISTRADA)
+  isArchived        Boolean              @default(false)
+  archivedAt        DateTime?
+  archivedById      String?              @db.Uuid
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  createdBy    User        @relation("CorrespondenceCreatedBy", fields: [createdById], references: [id])
+  archivedBy   User?       @relation("CorrespondenceArchivedBy", fields: [archivedById], references: [id])
+  routeSheet   RouteSheet?
+  attachments  Attachment[]
+  events       TrackingEvent[]
+  publicTokens PublicTrackingToken[]
+  notifications NotificationLog[]
+
+  @@unique([year, sequence])
+  @@index([currentStatus])
+  @@index([registeredAt])
+  @@index([createdById])
+  @@map("correspondences")
+}
+
+model RouteSheet {
+  id             String   @id @default(uuid()) @db.Uuid
+  correspondenceId String @unique @db.Uuid
+  createdById    String   @db.Uuid
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  correspondence Correspondence  @relation(fields: [correspondenceId], references: [id], onDelete: Cascade)
+  createdBy      User            @relation("RouteSheetCreatedBy", fields: [createdById], references: [id])
+  recipients     RouteRecipient[]
+
+  @@map("route_sheets")
+}
+
+model RouteRecipient {
+  id           String               @id @default(uuid()) @db.Uuid
+  routeSheetId String               @db.Uuid
+  userId       String?              @db.Uuid
+  departmentId String?              @db.Uuid
+  sequence     Int
+  status       RouteRecipientStatus @default(PENDIENTE)
+  action       RecipientAction?
+  receivedAt   DateTime?
+  classifiedAt DateTime?
+  dispatchedAt DateTime?
+  internalNotes String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  routeSheet      RouteSheet       @relation(fields: [routeSheetId], references: [id], onDelete: Cascade)
+  user            User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  department      Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  events          TrackingEvent[]
+  notifications   NotificationLog[]
+
+  @@unique([routeSheetId, sequence])
+  @@index([userId])
+  @@index([departmentId])
+  @@index([status])
+  @@map("route_recipients")
+}
+
+model Attachment {
+  id             String   @id @default(uuid()) @db.Uuid
+  correspondenceId String @db.Uuid
+  originalName   String
+  storageKey     String   @unique
+  mimeType       String
+  sizeBytes      Int
+  checksum       String
+  uploadedById   String   @db.Uuid
+  createdAt      DateTime @default(now())
+
+  correspondence Correspondence @relation(fields: [correspondenceId], references: [id], onDelete: Cascade)
+  uploadedBy     User           @relation(fields: [uploadedById], references: [id])
+
+  @@index([correspondenceId])
+  @@map("attachments")
+}
+
+model TrackingEvent {
+  id               String            @id @default(uuid()) @db.Uuid
+  correspondenceId String            @db.Uuid
+  recipientId      String?           @db.Uuid
+  eventType        TrackingEventType
+  fromStatus       String?
+  toStatus         String?
+  actorId          String?           @db.Uuid
+  occurredAt       DateTime          @default(now())
+  metadata         Json?
+  requestId        String?
+
+  correspondence Correspondence  @relation(fields: [correspondenceId], references: [id], onDelete: Cascade)
+  recipient      RouteRecipient? @relation(fields: [recipientId], references: [id], onDelete: SetNull)
+  actor          User?           @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([correspondenceId, occurredAt])
+  @@index([recipientId])
+  @@map("tracking_events")
+}
+
+model PublicTrackingToken {
+  id               String    @id @default(uuid()) @db.Uuid
+  correspondenceId String    @db.Uuid
+  tokenHash        String    @unique
+  expiresAt        DateTime?
+  revokedAt        DateTime?
+  lastUsedAt       DateTime?
+  createdAt        DateTime  @default(now())
+
+  correspondence Correspondence @relation(fields: [correspondenceId], references: [id], onDelete: Cascade)
+
+  @@index([correspondenceId])
+  @@map("public_tracking_tokens")
+}
+
+model NotificationLog {
+  id               String             @id @default(uuid()) @db.Uuid
+  recipientEmail   String
+  template         String
+  status           NotificationStatus @default(PENDIENTE)
+  attempts         Int                @default(0)
+  sentAt           DateTime?
+  errorCode        String?
+  errorMessage     String?
+  correspondenceId String?            @db.Uuid
+  routeRecipientId String?            @db.Uuid
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  correspondence Correspondence? @relation(fields: [correspondenceId], references: [id], onDelete: SetNull)
+  routeRecipient RouteRecipient? @relation(fields: [routeRecipientId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([correspondenceId])
+  @@map("notification_logs")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  action     String
+  entityType String
+  entityId   String?
+  occurredAt DateTime @default(now())
+  requestId  String?
+  ip         String?
+  userAgent  String?
+  metadata   Json?
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([occurredAt])
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@map("audit_logs")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  userAgent String?
+  ip        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model CorrelativeSequence {
+  year  Int @id
+  value Int @default(0)
+
+  @@map("correlative_sequences")
+}
