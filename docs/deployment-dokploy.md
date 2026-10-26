@@ -60,6 +60,7 @@ API_PORT=3001
 INSTITUTION_TIMEZONE=America/La_Paz
 DATABASE_URL=postgresql://unior:<password>@correspondencia-db:5432/correspondencia_unior?schema=public
 CORS_ORIGINS=https://correspondencia.midominio.edu.bo
+TRUST_PROXY=true
 
 # Seguridad (tres secretos distintos, >= 32 caracteres)
 JWT_ACCESS_SECRET=<secreto-1>

@@ -15,6 +15,10 @@ async function bootstrap(): Promise<void> {
   const config = app.get(AppConfigService);
 
   app.setGlobalPrefix(config.prefix);
+  if (config.trustProxy) {
+    // Detrás de Traefik (Dokploy) la IP real llega en X-Forwarded-For.
+    app.getHttpAdapter().getInstance().set('trust proxy', 1);
+  }
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   app.use(
     helmet({

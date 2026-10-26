@@ -47,6 +47,11 @@ export class AppConfigService {
     return list(this.config.get<string>('CORS_ORIGINS'), ['http://localhost:3000']);
   }
 
+  /** Confía en el proxy inverso (Traefik/Dokploy) para obtener la IP real del cliente. */
+  get trustProxy(): boolean {
+    return bool(this.config.get<string>('TRUST_PROXY'));
+  }
+
   get timezone(): string {
     return this.config.get<string>('INSTITUTION_TIMEZONE') ?? 'America/La_Paz';
   }
